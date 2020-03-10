@@ -23,7 +23,7 @@ This is an example playbook:
       vars:
         redmine_issue_server_url: "<Your redmine url>"
         redmine_issue_project_name: "<Redmine project name>"
-        redmine_issue_api_password: < api password for the api, supplied by Redmine >
+        redmine_issue_api_password: < api password, supplied by Redmine for automation user >
         redmine_issue_validate_certs: < yes/no >        
         redmine_issue_json_request_file: /tmp/request.json
         redmine_isssue_create_request:

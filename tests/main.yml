@@ -29,6 +29,30 @@
             assigned_to_id: 96
             subject: "[Ansible] Alta monitorizacion servidor {{ inventory_hostname }}"
             description: "Alta servidor {{ inventory_hostname }} con checkeos básicos"
+  tasks:
+    - name: Search for redmine issue
+      uri:
+        url: >-
+         {{ redmine_issue_server_url
+            + "/projects/"
+            + redmine_issue_project_name
+            + "/issues.json?parent_id="
+            ~ redmine_isssue_create_request.issue.parent_issue_id
+            + "&description=~"
+            + inventory_hostname }}
+        method: GET
+        validate_certs: "{{ redmine_issue_validate_certs }}"
+        headers:
+          X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+        return_content: yes
+        timeout: 90
+      register: redmine_issue_check_issue_result
+
+    - name: Ensure redmine issue is created
+      assert:
+        that:
+          - redmine_issue_check_issue_result.json.total_count > 0
+
   tags:
     - idempotence
 
