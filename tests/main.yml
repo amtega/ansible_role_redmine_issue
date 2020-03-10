@@ -48,10 +48,10 @@
         timeout: 90
       register: redmine_issue_check_issue_result
 
-    - name: Ensure redmine issue is created
+    - name: Ensure redmine issue is created just once
       assert:
         that:
-          - redmine_issue_check_issue_result.json.total_count > 0
+          - redmine_issue_check_issue_result.json.total_count == 1
 
   tags:
     - idempotence
