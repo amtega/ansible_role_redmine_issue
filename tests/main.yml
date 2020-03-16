@@ -1,2 +1,66 @@
 ---
 # Tasks for testing role
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-7`) ]
+
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: run idempotence test
+  hosts: docker_sandbox_containers
+  roles:
+    - role: amtega.redmine_issue
+      vars:
+        redmine_issue_server_url: "https://redmine-sistemas.stg.xunta.local/proxectos-sistemas"
+        redmine_issue_project_name: "peticiones-internas-de-servicio"
+        redmine_issue_api_password: f30203a9be7e35216ea2121c798d3062da973ffb
+        redmine_issue_validate_certs: "no"
+        redmine_issue_json_request_file: /tmp/request.json
+        redmine_isssue_create_request:
+          issue:
+            parent_issue_id: 1030
+            category_id: 96
+            assigned_to_id: 96
+            subject: "[Ansible] Alta monitorizacion servidor {{ inventory_hostname }}"
+            description: "Alta servidor {{ inventory_hostname }} con checkeos básicos"
+  tasks:
+    - name: Search for redmine issue
+      uri:
+        url: >-
+         {{ redmine_issue_server_url
+            + "/projects/"
+            + redmine_issue_project_name
+            + "/issues.json?parent_id="
+            ~ redmine_isssue_create_request.issue.parent_issue_id
+            + "&description=~"
+            + inventory_hostname }}
+        method: GET
+        validate_certs: "{{ redmine_issue_validate_certs }}"
+        headers:
+          X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+        return_content: yes
+        timeout: 90
+      register: redmine_issue_check_issue_result
+
+    - name: Ensure redmine issue is created just once
+      assert:
+        that:
+          - redmine_issue_check_issue_result.json.total_count == 1
+
+  tags:
+    - idempotence
+
+- name: Cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox
