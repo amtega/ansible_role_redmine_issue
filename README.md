@@ -1,10 +1,6 @@
-# Ansible <!-- this role name --> role
+# Ansible redmine_issue role
 
-This is an [Ansible](http://www.ansible.com) role which create a issue in Redmine via rest api.
-
-## Requirements
-
-[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
+This is an [Ansible](http://www.ansible.com) role to create a nissue in Redmine via REST API.
 
 ## Role Variables
 
@@ -21,16 +17,15 @@ This is an example playbook:
   roles:
     - role: amtega.redmine_issue
       vars:
-        redmine_issue_server_url: "<Your redmine url>"
-        redmine_issue_project_name: "<Redmine project name>"
-        redmine_issue_api_password: < api password, supplied by Redmine for automation user >
-        redmine_issue_validate_certs: < yes/no >        
-        redmine_issue_json_request_file: /tmp/request.json
+        redmine_issue_server_url: https://redmine.acme.com
+        redmine_issue_project_name: oneproject
+        redmine_issue_api_password: apipassword
+        redmine_issue_validate_certs: no       
         redmine_isssue_create_request:
           issue:
-            parent_issue_id: < int >
-            category_id: < int >
-            assigned_to_id: < int >
+            parent_issue_id: 100
+            category_id: 150
+            assigned_to_id: 250
             subject: "[Ansible] Sunject test"
             description: "Description text"
 
@@ -40,16 +35,16 @@ This is an example playbook:
 
 Tests are based on docker containers. You can setup docker engine quickly using the playbook `files/setup.yml` available in the role [amtega.docker_engine](https://galaxy.ansible.com/amtega/docker_engine).
 
-Once you have docker, you can run the tests with the following commands:
+To run test you need provide the variables defined in `defaults/main.yml`. One way to provide this information is calling the testing playbook passing an additional plus the default one provided for testing, as it's show in this example:
 
 ```shell
-$ cd amtega.redmine_issue/tests
+$ cd amtega.redmine_issue/tests -i inventory -i ~/mycustominventory.yml --vault-id myvault@prompt
 $ ansible-playbook main.yml
 ```
 
 ## License
 
-Copyright (C) <!-- YEAR --> AMTEGA - Xunta de Galicia
+Copyright (C) 2020 AMTEGA - Xunta de Galicia
 
 This role is free software: you can redistribute it and/or modify it under the terms of:
 
