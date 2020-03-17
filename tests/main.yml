@@ -1,0 +1,54 @@
+---
+# Tasks for testing role
+
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-7`) ]
+
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+      docker_sandbox_idempotence_test: no
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: docker_sandbox_containers
+  roles:
+    - role: amtega.redmine_issue
+  tasks:
+    - name: Search redmine issue
+      uri:
+        url: >-
+         {{ redmine_issue_server_url
+            + "/projects/"
+            + redmine_issue_project_name
+            + "/issues.json?parent_id="
+            ~ redmine_isssue_create_request.issue.parent_issue_id
+            + "&description=~"
+            + inventory_hostname }}
+        method: GET
+        validate_certs: "{{ redmine_issue_validate_certs | bool }}"
+        headers:
+          X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+        return_content: yes
+        timeout: 90
+      register: redmine_issue_check_issue_result
+
+    - name: Ensure redmine issue is created just once
+      assert:
+        that:
+          - redmine_issue_check_issue_result.json.total_count == 1
+  tags:
+    - idempotence
+
+- name: Cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox

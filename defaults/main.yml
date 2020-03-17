@@ -1,0 +1,49 @@
+---
+# Role default lower priority variables
+
+# Redmine server URL
+redmine_issue_server_url: https://redmine-example.domain.com/example
+
+# Redmine project
+redmine_issue_project_name: project
+
+# Redmine API password
+redmine_issue_api_password: mypassword
+
+# Ignore de certs validation
+redmine_issue_validate_certs: no
+
+# Request timeout
+
+redmine_issue_timeout: 60
+
+# Dict with request parameters needed to create a issue. The parameters can be
+# required or optional depending on your redmine configuration.
+#
+# You can read https://www.redmine.org/projects/redmine/wiki/Rest_Issues
+# for further information.
+#
+# {
+#   project_id: <id>
+#   tracker_id: <id>
+#   status_id: <id>
+#   priority_id: <id>
+#   subject: <subject>
+#   description: <description>
+#   category_id: <id>
+#   fixed_version_id: <id>     # ID of the Target Versions (previously called
+#                              # 'Fixed Version' and still referred to as such
+#                              # in the API)
+#   assigned_to_id: <id>       # ID of the user to assign the issue to
+#                              # (currently no mechanism to assign by name)
+#   parent_issue_id: <id>      # ID of the parent issue
+#   custom_fields: <id>
+#   watcher_user_ids: <list>   # List of strings with user ids to add as
+#                              # watchers
+#   is_private: <yes_no>       # Indicate whether the issue is private or not
+#   estimated_hours: <hours>   # Number of hours estimated for the issue
+# }
+
+redmine_isssue_create_request:
+    subject: "[Ansible] Example subject"
+    description: "Example description"
