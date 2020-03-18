@@ -38,8 +38,8 @@ Tests are based on docker containers. You can setup docker engine quickly using 
 To run test you need provide the variables defined in `defaults/main.yml`. One way to provide this information is calling the testing playbook passing an additional plus the default one provided for testing, as it's show in this example:
 
 ```shell
-$ cd amtega.redmine_issue/tests -i inventory -i ~/mycustominventory.yml --vault-id myvault@prompt
-$ ansible-playbook main.yml
+$ cd amtega.redmine_issue/tests
+$ ansible-playbook main.yml -i inventory -i ~/mycustominventory.yml --vault-id myvault@prompt
 ```
 
 ## License
