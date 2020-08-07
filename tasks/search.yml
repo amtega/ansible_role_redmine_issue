@@ -1,0 +1,20 @@
+---
+# Search issue tasks
+
+- name: Search redmine issue
+  uri:
+    url: >-
+      {{ redmine_issue_server_url
+         + "/projects/"
+         + redmine_issue_project_name
+         + "/issues.json"}}
+    method: GET
+    validate_certs: "{{ redmine_issue_validate_certs }}"
+    headers:
+      X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+    body_format: json
+    body: "{{ lookup('template', 'search_request.yml.j2') | from_yaml }}"
+    return_content: yes
+    timeout: "{{ redmine_issue_timeout }}"
+  register: redmine_issue_search_result
+  no_log: "{{ redmine_issue_no_log | bool | default(false) }}"

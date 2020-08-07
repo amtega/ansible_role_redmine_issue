@@ -1,0 +1,33 @@
+{% set ns = namespace(equal=true) %}
+
+{% if redmine_issue_search_result.json.total_count == 1 %}
+  {% set current_issue = redmine_issue_search_result.json.issues | first %}
+  {% for k in redmine_issue_fields.keys() | list %}
+    {% if k is search(".*_id") %}
+      {% set field = k | regex_replace("(.*)_id", "\\1") %}
+      {% if redmine_issue_fields[k] != current_issue[field].id %}
+        {% set ns.equal = false %}
+      {% endif %}
+    {% elif k == "custom_fields" %}
+      {% for custom_field in redmine_issue_fields[k] %}
+        {% set current_custom_field_list = current_issue.custom_fields
+                                           | selectattr("id",
+                                                        "equalto",
+                                                        custom_field.id)
+                                           | list %}
+        {% if current_custom_field_list | length != 0 %}
+          {% set current_custom_field = current_custom_field_list | list %}
+            {% if cf.value != current_custom_field.value %}
+              {% set ns.equal = false %}
+            {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% if redmine_issue_fields[k] != current_issue[k] %}
+        {% set ns.equal = false %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{{ ns.equal | to_json }}
