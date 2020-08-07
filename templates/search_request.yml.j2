@@ -1,0 +1,5 @@
+{% for k in redmine_issue_fields.keys() | list %}
+{% if k in redmine_issue_key_fields %}
+{{ k }}: {{ redmine_issue_fields[k] | to_json }}
+{% endif %}
+{% endfor %}
