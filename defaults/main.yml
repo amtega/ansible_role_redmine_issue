@@ -2,22 +2,26 @@
 # Role default lower priority variables
 
 # Redmine server URL
+
 redmine_issue_server_url: https://redmine-example.domain.com/example
 
 # Redmine project
+
 redmine_issue_project_name: project
 
 # Redmine API password
+
 redmine_issue_api_password: mypassword
 
 # Ignore de certs validation
+
 redmine_issue_validate_certs: no
 
 # Request timeout
 
 redmine_issue_timeout: 60
 
-# Dict with request parameters needed to create a issue. The parameters can be
+# Dict with request fields needed to create a issue. The fields can be
 # required or optional depending on your redmine configuration.
 #
 # You can read https://www.redmine.org/projects/redmine/wiki/Rest_Issues
@@ -31,19 +35,38 @@ redmine_issue_timeout: 60
 #   subject: <subject>
 #   description: <description>
 #   category_id: <id>
-#   fixed_version_id: <id>     # ID of the Target Versions (previously called
-#                              # 'Fixed Version' and still referred to as such
-#                              # in the API)
-#   assigned_to_id: <id>       # ID of the user to assign the issue to
-#                              # (currently no mechanism to assign by name)
-#   parent_issue_id: <id>      # ID of the parent issue
-#   custom_fields: <id>
-#   watcher_user_ids: <list>   # List of strings with user ids to add as
-#                              # watchers
+#   fixed_version_id: <id>
+#   assigned_to_id: <id>
+#   parent_issue_id: <id>
+#   custom_fields: <list>
+#   watcher_user_ids: <list>
 #   is_private: <yes_no>       # Indicate whether the issue is private or not
 #   estimated_hours: <hours>   # Number of hours estimated for the issue
 # }
 
-redmine_isssue_create_request:
-    subject: "[Ansible] Example subject"
-    description: "Example description"
+redmine_issue_fields:
+  subject: "[Ansible] Example subject"
+  description: "Example description"
+
+# State of the issue. Can be present or absent. If present and the issue exists,
+# it will ne updated.
+
+redmine_issue_fields_state: present
+
+# List of strings with the fields to consider when searching for the issue
+# before managing it. This avoids creating duplicated issues and also determines
+# the issue to delete if state is absent
+
+redmine_issue_key_fields:
+  - project_id
+  - tracker_id
+  - subject
+  - category_id
+  - parent_issue_id
+  - custom_fields
+  - is_private
+
+
+# Hide sensitive information
+
+redmine_issue_no_log: yes

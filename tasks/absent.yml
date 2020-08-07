@@ -1,0 +1,28 @@
+---
+# Issue removal tasks
+
+- name: Check issue
+  assert:
+    that: redmine_issue_search_result.json.total_count in [0,1]
+    quiet: yes
+    fail_msg: Found more than one issue to remove
+
+- name: Remove issue in redmine
+  uri:
+    url: >-
+      {{ redmine_issue_server_url
+         + "/issues/"
+         ~ (redmine_issue_search_result.json.issues | first).id
+         + ".json" }}
+    method: DELETE
+    validate_certs: "{{ redmine_issue_validate_certs | bool }}"
+    headers:
+      X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+    body_format: json
+    return_content: yes
+    timeout: "{{ redmine_issue_timeout }}"
+  when: redmine_issue_search_result.json.total_count == 1
+  register: redmine_issue_remove_issue_result
+  changed_when: redmine_issue_remove_issue_result.status == 201
+  failed_when: redmine_issue_remove_issue_result.status != 201
+  no_log: "{{ redmine_issue_no_log | bool | default(false) }}"

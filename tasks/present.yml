@@ -1,0 +1,39 @@
+---
+# Issue creation tasks
+
+- name: Check issue
+  assert:
+    that: redmine_issue_search_result.json.total_count in [0,1]
+    quiet: yes
+    fail_msg: Found more than one issue to update
+
+- name: Setup issue in redmine
+  uri:
+    url: >-
+      {{ redmine_issue_server_url
+         + (redmine_issue_search_result.json.total_count == 0)
+           | ternary("/projects/"
+                     + redmine_issue_project_name
+                     + "/issues.json",
+                     "/issues/"
+                     ~ (redmine_issue_search_result.json.issues | first).id
+                     + ".json") }}
+    method: >-
+      {{ (redmine_issue_search_result.json.total_count == 0)
+         | ternary("POST", "PUT") }}
+    validate_certs: "{{ redmine_issue_validate_certs | bool }}"
+    headers:
+      X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+    body_format: json
+    body:
+      issue: "{{ redmine_issue_fields }}"
+    return_content: yes
+    timeout: "{{ redmine_issue_timeout }}"
+  when: not redmine_issue_is_equal
+  register: redmine_issue_setup_issue_result
+  changed_when: redmine_issue_setup_issue_result.status in [200, 201]
+  failed_when: redmine_issue_setup_issue_result.status not in [200, 201]
+  no_log: "{{ redmine_issue_no_log | bool | default(false) }}"
+  vars:
+    redmine_issue_is_equal: >-
+      {{ lookup("template", "is_equal.yml.j2") | from_yaml | bool }}

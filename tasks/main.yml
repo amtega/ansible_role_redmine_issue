@@ -2,45 +2,14 @@
 # Role tasks
 
 - block:
-    - name: Check if redmine issue is already created
-      uri:
-        url: >-
-          {{ redmine_issue_server_url
-             + "/projects/"
-             + redmine_issue_project_name
-             + "/issues.json?parent_id="
-             ~ redmine_isssue_create_request.issue.parent_issue_id
-             + "&description=~"
-             + inventory_hostname }}
-        method: GET
-        validate_certs: "{{ redmine_issue_validate_certs }}"
-        headers:
-          X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
-        return_content: yes
-        timeout: 90
-      register: redmine_issue_get_issue_result
+    - include_tasks: search.yml
 
-    - when: redmine_issue_get_issue_result.json.total_count == 0
-      block:
-        - name: Add issue to redmine project via REST API
-          uri:
-            url: >-
-              {{ redmine_issue_server_url
-                 + "/projects/"
-                 + redmine_issue_project_name
-                 + "/issues.json"}}
-            method: POST
-            validate_certs: "{{ redmine_issue_validate_certs | bool }}"
-            headers:
-              X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
-              Content-Type: application/json
-            body_format: json
-            body: "{{ redmine_isssue_create_request | to_json }}"
-            return_content: yes
-            timeout: "{{ redmine_issue_timeout }}"
-          register: redmine_issue_add_issue_result
-          changed_when: redmine_issue_add_issue_result.status == 201
-          failed_when: redmine_issue_add_issue_result.status != 201
+    - include_tasks: present.yml
+      when: redmine_issue_state | default("present") == "present"
 
+    - include_tasks: absent.yml
+      when: redmine_issue_state | default("present") == "absent"
+
+    - include_tasks: fact.yml
   tags:
     - role::redmine_issue

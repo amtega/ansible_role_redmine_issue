@@ -1,0 +1,27 @@
+---
+
+- name: Verify
+  hosts: molecule_hosts
+  gather_facts: no
+  tasks:
+    - name: Search redmine issue
+      uri:
+        url: >-
+          {{ redmine_issue_server_url
+             + "/projects/"
+             + redmine_issue_project_name
+             + "/issues.json"}}
+        method: GET
+        validate_certs: "{{ redmine_issue_validate_certs }}"
+        headers:
+          X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+        body_format: json
+        body: "{{ redmine_issue_fields }}"
+        return_content: yes
+        timeout: 60
+      register: search_issue_result
+
+    - name: Ensure redmine issue is created just once
+      assert:
+        that:
+          - search_issue_result.json.total_count == 1
