@@ -9,11 +9,7 @@
 
 - name: Remove issue in redmine
   uri:
-    url: >-
-      {{ redmine_issue_server_url
-         + "/issues/"
-         ~ (redmine_issue_search_result.json.issues | first).id
-         + ".json" }}
+    url: "{{ lookup('template', 'url.j2') | trim }}"
     method: DELETE
     validate_certs: "{{ redmine_issue_validate_certs | bool }}"
     headers:
