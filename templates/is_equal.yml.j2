@@ -28,6 +28,8 @@
       {% endif %}
     {% endif %}
   {% endfor %}
+{% else %}
+  {% set ns.equal = false %}
 {% endif %}
 
 {{ ns.equal | to_json }}

@@ -48,11 +48,6 @@ redmine_issue_fields:
   subject: "[Ansible] Example subject"
   description: "Example description"
 
-# State of the issue. Can be present or absent. If present and the issue exists,
-# it will ne updated.
-
-redmine_issue_fields_state: present
-
 # List of strings with the fields to consider when searching for the issue
 # before managing it. This avoids creating duplicated issues and also determines
 # the issue to delete if state is absent

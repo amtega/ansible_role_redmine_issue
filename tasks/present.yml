@@ -9,15 +9,7 @@
 
 - name: Setup issue in redmine
   uri:
-    url: >-
-      {{ redmine_issue_server_url
-         + (redmine_issue_search_result.json.total_count == 0)
-           | ternary("/projects/"
-                     + redmine_issue_project_name
-                     + "/issues.json",
-                     "/issues/"
-                     ~ (redmine_issue_search_result.json.issues | first).id
-                     + ".json") }}
+    url: "{{ lookup('template', 'url.j2') | trim }}"
     method: >-
       {{ (redmine_issue_search_result.json.total_count == 0)
          | ternary("POST", "PUT") }}
@@ -29,7 +21,7 @@
       issue: "{{ redmine_issue_fields }}"
     return_content: yes
     timeout: "{{ redmine_issue_timeout }}"
-  when: not redmine_issue_is_equal
+  when: not redmine_issue_is_equal | bool
   register: redmine_issue_setup_issue_result
   changed_when: redmine_issue_setup_issue_result.status in [200, 201]
   failed_when: redmine_issue_setup_issue_result.status not in [200, 201]
