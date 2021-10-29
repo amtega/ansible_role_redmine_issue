@@ -5,7 +5,8 @@
   {% for k in redmine_issue_fields.keys() | list %}
     {% if k is search(".*_id") %}
       {% set field = k | regex_replace("(.*)_id", "\\1") %}
-      {% if redmine_issue_fields[k] != current_issue[field].id %}
+      {% if field in current_issue.keys() | list
+            and redmine_issue_fields[k] != current_issue[field].id %}
         {% set ns.equal = false %}
       {% endif %}
     {% elif k == "custom_fields" %}
@@ -17,7 +18,7 @@
                                            | list %}
         {% if current_custom_field_list | length != 0 %}
           {% set current_custom_field = current_custom_field_list | list %}
-            {% if cf.value != current_custom_field.value %}
+            {% if custom_field.value != current_custom_field.value %}
               {% set ns.equal = false %}
             {% endif %}
         {% endif %}
