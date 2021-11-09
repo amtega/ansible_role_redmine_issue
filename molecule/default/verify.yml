@@ -10,7 +10,7 @@
           {{ redmine_issue_server_url
              + "/projects/"
              + redmine_issue_project_name
-             + "/issues.json"}}
+             + "/issues.json" }}
         method: GET
         validate_certs: "{{ redmine_issue_validate_certs }}"
         headers:

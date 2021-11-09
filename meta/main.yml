@@ -3,6 +3,7 @@
 
 galaxy_info:
   role_name: redmine_issue
+  namespace: amtega
   author: José Enrique Mourón Regueira / Juan Antonio Valiño García
   description: Setup an isssue in Redmine
   company: AMTEGA - Xunta de Galicia
