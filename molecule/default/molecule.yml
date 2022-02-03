@@ -13,35 +13,35 @@ driver:
 lint: "${MOLECULE_SCENARIO_DIRECTORY}/linters.sh"
 platforms:
   - name: "centos6-${INSTANCE_UUID:-1}"
-    image: centos:6
+    image: quay.io/centos/centos:centos6
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_6
   - name: "centos7-${INSTANCE_UUID:-1}"
-    image: centos:7
+    image: quay.io/centos/centos:centos7
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_7
   - name: "centos8-${INSTANCE_UUID:-1}"
-    image: centos:8
+    image: quay.io/centos/centos:stream8
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_8
-  - name: "fedora33-${INSTANCE_UUID:-1}"
-    image: fedora:33
-    groups:
-      - molecule_hosts
-      - molecule_hosts_fedora
-      - molecule_hosts_fedora_33
   - name: "fedora34-${INSTANCE_UUID:-1}"
-    image: fedora:34
+    image: quay.io/fedora/fedora:34
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
       - molecule_hosts_fedora_34
+  - name: "fedora35-${INSTANCE_UUID:-1}"
+    image: quay.io/fedora/fedora:35centos_8
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+      - molecule_hosts_fedora_35
 provisioner:
   name: ansible
   ansible_args:
@@ -49,7 +49,7 @@ provisioner:
     - --vault-password-file=${ANSIBLE_VAULT_PASSWORD_FILE:-/etc/hostname}
   config_options:
     defaults:
-      callback_whitelist: profile_tasks
+      callbacks_enabled: profile_tasks
       action_plugins: $PWD/action_plugins
   inventory:
     hosts:
@@ -57,6 +57,9 @@ provisioner:
         vars:
           ansible_user: root
       molecule_hosts_fedora:
+        vars:
+          ansible_python_interpreter: /usr/bin/python3
+      molecule_hosts_centos_8:
         vars:
           ansible_python_interpreter: /usr/bin/python3
 verifier:
