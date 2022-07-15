@@ -11,7 +11,7 @@ redmine_issue_project_name: project
 
 # Redmine API password
 
-redmine_issue_api_password: mypassword
+redmine_issue_api_password: mypassword  # pragma: allowlist secret
 
 # Ignore de certs validation
 

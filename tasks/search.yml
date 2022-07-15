@@ -2,7 +2,7 @@
 # Search issue tasks
 
 - name: Search redmine issue
-  uri:
+  ansible.builtin.uri:
     url: >-
       {{ redmine_issue_server_url
          + "/projects/"

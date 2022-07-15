@@ -2,13 +2,13 @@
 # Issue removal tasks
 
 - name: Check issue
-  assert:
+  ansible.builtin.assert:
     that: redmine_issue_search_result.json.total_count in [0,1]
     quiet: yes
     fail_msg: Found more than one issue to remove
 
 - name: Remove issue in redmine
-  uri:
+  ansible.builtin.uri:
     url: "{{ lookup('template', 'url.j2') | trim }}"
     method: DELETE
     validate_certs: "{{ redmine_issue_validate_certs | bool }}"
