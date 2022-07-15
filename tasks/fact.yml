@@ -2,7 +2,7 @@
 # Fact tasks
 
 - name: Setup fact with redmine result
-  set_fact:
+  ansible.builtin.set_fact:
     redmine_issue_result: >-
       {{ redmine_issue_setup_issue_result.json
          | default(redmine_issue_remove_issue_result.json)

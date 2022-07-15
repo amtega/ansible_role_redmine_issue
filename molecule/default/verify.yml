@@ -5,7 +5,7 @@
   gather_facts: no
   tasks:
     - name: Search redmine issue
-      uri:
+      ansible.builtin.uri:
         url: >-
           {{ redmine_issue_server_url
              + "/projects/"
@@ -22,6 +22,6 @@
       register: search_issue_result
 
     - name: Ensure redmine issue is created just once
-      assert:
+      ansible.builtin.assert:
         that:
           - search_issue_result.json.total_count == 1

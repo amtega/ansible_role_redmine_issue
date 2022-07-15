@@ -1,7 +1,7 @@
 ---
-# Role tasks
 
-- block:
+- name: Setup redmine issue
+  block:
     - include_tasks: search.yml
 
     - include_tasks: present.yml
