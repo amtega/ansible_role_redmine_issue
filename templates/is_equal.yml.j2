@@ -24,7 +24,7 @@
         {% endif %}
       {% endfor %}
     {% else %}
-      {% if redmine_issue_fields[k] != current_issue[k] %}
+      {% if redmine_issue_fields[k] != current_issue[k] | default(none) %}
         {% set ns.equal = false %}
       {% endif %}
     {% endif %}
