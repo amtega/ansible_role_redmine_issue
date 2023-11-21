@@ -3,15 +3,15 @@
 
 - name: Check issue
   ansible.builtin.assert:
-    that: redmine_issue_search_result.json.total_count in [0,1]
-    quiet: yes
+    that: redmine_issue_search_result | length in [0,1]
+    quiet: true
     fail_msg: Found more than one issue to update
 
 - name: Setup issue in redmine
   ansible.builtin.uri:
     url: "{{ lookup('template', 'url.j2') | trim }}"
     method: >-
-      {{ (redmine_issue_search_result.json.total_count == 0)
+      {{ (redmine_issue_search_result | length == 0)
          | ternary("POST", "PUT") }}
     validate_certs: "{{ redmine_issue_validate_certs | bool }}"
     headers:
@@ -19,7 +19,7 @@
     body_format: json
     body:
       issue: "{{ redmine_issue_fields }}"
-    return_content: yes
+    return_content: true
     status_code:
       - 200
       - 204

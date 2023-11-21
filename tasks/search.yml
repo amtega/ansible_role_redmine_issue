@@ -1,7 +1,10 @@
 ---
-# Search issue tasks
+- name: Setup fact with search body
+  ansible.builtin.set_fact:
+    redmine_issue_search_body: >-
+      {{ lookup('template', 'search_request.yml.j2') | from_yaml }}
 
-- name: Search redmine issue
+- name: Gather redmine issues count
   ansible.builtin.uri:
     url: >-
       {{ redmine_issue_server_url
@@ -13,8 +16,61 @@
     headers:
       X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
     body_format: json
-    body: "{{ lookup('template', 'search_request.yml.j2') | from_yaml }}"
-    return_content: yes
+    body: "{{ redmine_issue_search_body | combine({'limit': 1}) }}"
+    return_content: true
     timeout: "{{ redmine_issue_timeout }}"
-  register: redmine_issue_search_result
+  register: redmine_issue_search_count_result
   no_log: "{{ redmine_issue_no_log | bool | default(false) }}"
+
+- name: Gather redmine issues
+  ansible.builtin.uri:
+    url: >-
+      {{ redmine_issue_server_url
+         + "/projects/"
+         + redmine_issue_project_name
+         + "/issues.json"
+         + "?offset=" ~ redmine_issue_offset
+         + "&limit=" ~ redmine_issue_limit }}
+    method: GET
+    validate_certs: "{{ redmine_issue_validate_certs }}"
+    headers:
+      X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
+    body_format: json
+    body: "{{ redmine_issue_search_body }}"
+    return_content: true
+    timeout: "{{ redmine_issue_timeout }}"
+  register: redmine_issue_search_result_raw
+  loop: "{{ range(0, redmine_issue_total_pages | int) }}"
+  loop_control:
+    loop_var: redmine_issue_page
+    label: >-
+      page {{ redmine_issue_page | int + 1 }}
+      /
+      {{ redmine_issue_total_pages }}
+  vars:
+    redmine_issue_pagination_limit: 100
+    redmine_issue_total_pages: >-
+      {{ (redmine_issue_search_count_result.json.total_count | int
+          / redmine_issue_pagination_limit | int)
+         | round(method="ceil")
+         | int }}
+    redmine_issue_limit: "{{ redmine_issue_pagination_limit | int - 1 }}"
+    redmine_issue_offset: >-
+        {{ redmine_issue_page | int * redmine_issue_pagination_limit | int }}
+  no_log: "{{ redmine_issue_no_log | bool | default(false) }}"
+
+- name: Filter issues
+  ansible.builtin.set_fact:
+    redmine_issue_search_result: >-
+      {{ redmine_issue_search_result_raw.results
+         | map(attribute="json")
+         | map(attribute="issues")
+         | list
+         | flatten
+         | selectattr("subject", "search", redmine_issue_subject_regex)
+         | list }}
+  vars:
+    redmine_issue_subject_regex: >-
+      {{ (redmine_issue_search_body.subject | default("") | length > 0)
+         | ternary("^" + redmine_issue_search_body.subject | regex_escape + "$",
+                   ".*") }}
