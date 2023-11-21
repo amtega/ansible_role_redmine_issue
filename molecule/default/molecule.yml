@@ -1,47 +1,43 @@
 ---
-
 dependency:
   name: galaxy
-  enabled: yes
+  enabled: true
   options:
-    ignore-certs: yes
-    ignore-errors: yes
-    role-file: "${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml"
-    requirements-file: "${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml"
+    ignore-certs: true
+    ignore-errors: true
+    role-file: ${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml
+    requirements-file: ${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml
+
 driver:
   name: podman
-lint: "${MOLECULE_SCENARIO_DIRECTORY}/linters.sh"
+
+lint: ${MOLECULE_SCENARIO_DIRECTORY}/linters.sh
+
 platforms:
-  - name: "centos6-${INSTANCE_UUID:-1}"
+  - name: centos6-${INSTANCE_UUID:-1}
     image: quay.io/centos/centos:centos6
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_6
-  - name: "centos7-${INSTANCE_UUID:-1}"
+  - name: centos7-${INSTANCE_UUID:-1}
     image: quay.io/centos/centos:centos7
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_7
-  - name: "centos8-${INSTANCE_UUID:-1}"
+  - name: centos8-${INSTANCE_UUID:-1}
     image: quay.io/centos/centos:stream8
     groups:
       - molecule_hosts
       - molecule_hosts_centos
       - molecule_hosts_centos_8
-  - name: "fedora34-${INSTANCE_UUID:-1}"
-    image: quay.io/fedora/fedora:34
+  - name: fedora-${INSTANCE_UUID:-1}
+    image: quay.io/fedora/fedora:latest
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
-      - molecule_hosts_fedora_34
-  - name: "fedora35-${INSTANCE_UUID:-1}"
-    image: quay.io/fedora/fedora:35centos_8
-    groups:
-      - molecule_hosts
-      - molecule_hosts_fedora
-      - molecule_hosts_fedora_35
+
 provisioner:
   name: ansible
   ansible_args:
@@ -62,5 +58,12 @@ provisioner:
       molecule_hosts_centos_8:
         vars:
           ansible_python_interpreter: /usr/bin/python3
+      molecule_hosts_centos_6:
+        vars:
+          python_build_install_dir: /opt/python
+          ansible_python_interpreter: /opt/python/bin/python3
+          packages_python_virtualenv_python: /opt/python/bin/python3
+          packages_python_virtualenv_command: /opt/python/bin/virtualenv
+
 verifier:
   name: ansible

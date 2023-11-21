@@ -3,8 +3,8 @@
 
 - name: Check issue
   ansible.builtin.assert:
-    that: redmine_issue_search_result.json.total_count in [0,1]
-    quiet: yes
+    that: redmine_issue_search_result | length in [0,1]
+    quiet: true
     fail_msg: Found more than one issue to remove
 
 - name: Remove issue in redmine
@@ -15,9 +15,9 @@
     headers:
       X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
     body_format: json
-    return_content: yes
+    return_content: true
     timeout: "{{ redmine_issue_timeout }}"
-  when: redmine_issue_search_result.json.total_count == 1
+  when: redmine_issue_search_result | length == 1
   register: redmine_issue_remove_issue_result
   changed_when: redmine_issue_remove_issue_result.status == 201
   failed_when: redmine_issue_remove_issue_result.status != 201

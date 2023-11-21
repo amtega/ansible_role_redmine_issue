@@ -1,15 +1,18 @@
 ---
-
 - name: Setup redmine issue
-  block:
-    - include_tasks: search.yml
-
-    - include_tasks: present.yml
-      when: redmine_issue_state | default("present") == "present"
-
-    - include_tasks: absent.yml
-      when: redmine_issue_state | default("present") == "absent"
-
-    - include_tasks: fact.yml
   tags:
     - role::redmine_issue
+  block:
+    - name: Search issue
+      ansible.builtin.include_tasks: search.yml
+
+    - name: Setup issue
+      ansible.builtin.include_tasks: present.yml
+      when: redmine_issue_state | default("present") == "present"
+
+    - name: Remove issue
+      ansible.builtin.include_tasks: absent.yml
+      when: redmine_issue_state | default("present") == "absent"
+
+    - name: Setup redmine issue facts
+      ansible.builtin.include_tasks: facts.yml

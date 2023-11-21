@@ -1,6 +1,4 @@
 ---
-# Role dependencies
-
 galaxy_info:
   role_name: redmine_issue
   namespace: amtega
@@ -18,5 +16,3 @@ galaxy_info:
     - api
     - rest
     - issue
-
-dependencies: []
