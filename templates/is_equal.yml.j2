@@ -1,7 +1,7 @@
 {% set ns = namespace(equal=true) %}
 
-{% if redmine_issue_search_result.json.total_count == 1 %}
-  {% set current_issue = redmine_issue_search_result.json.issues | first %}
+{% if redmine_issue_search_result | length == 1 %}
+  {% set current_issue = redmine_issue_search_result | first %}
   {% for k in redmine_issue_fields.keys() | list %}
     {% if k is search(".*_id") %}
       {% set field = k | regex_replace("(.*)_id", "\\1") %}

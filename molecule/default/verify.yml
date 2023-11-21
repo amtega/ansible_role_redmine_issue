@@ -1,8 +1,7 @@
 ---
-
 - name: Verify
   hosts: molecule_hosts
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Search redmine issue
       ansible.builtin.uri:
@@ -17,7 +16,7 @@
           X-Redmine-API-Key: "{{ redmine_issue_api_password }}"
         body_format: json
         body: "{{ redmine_issue_fields }}"
-        return_content: yes
+        return_content: true
         timeout: 60
       register: search_issue_result
 

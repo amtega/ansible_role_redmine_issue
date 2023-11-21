@@ -1,5 +1,5 @@
-{% if redmine_issue_search_result.json.issues | length == 0 %}
+{% if redmine_issue_search_result | length == 0 %}
   {{ redmine_issue_server_url }}/projects/{{ redmine_issue_project_name }}/issues.json
 {% else %}
-  {{ redmine_issue_server_url }}/issues/{{ (redmine_issue_search_result.json.issues | first).id }}.json
+  {{ redmine_issue_server_url }}/issues/{{ (redmine_issue_search_result | first).id }}.json
 {% endif %}

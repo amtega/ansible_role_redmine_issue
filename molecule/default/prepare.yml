@@ -1,5 +1,10 @@
 ---
-
 - name: Prepare
   hosts: molecule_hosts
-  gather_facts: no
+  gather_facts: false
+
+- name: Prepare CentOS 6 hosts
+  hosts: molecule_hosts_centos_6
+  gather_facts: false
+  roles:
+    - amtega.python

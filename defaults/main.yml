@@ -1,6 +1,4 @@
 ---
-# Role default lower priority variables
-
 # Redmine server URL
 
 redmine_issue_server_url: https://redmine-example.domain.com/example
@@ -15,7 +13,7 @@ redmine_issue_api_password: mypassword  # pragma: allowlist secret
 
 # Ignore de certs validation
 
-redmine_issue_validate_certs: no
+redmine_issue_validate_certs: false
 
 # Request timeout
 
@@ -46,7 +44,7 @@ redmine_issue_timeout: 60
 
 redmine_issue_fields:
   subject: "[Ansible] Example subject"
-  description: "Example description"
+  description: Example description
 
 # List of strings with the fields to consider when searching for the issue
 # before managing it. This avoids creating duplicated issues and also determines
@@ -63,4 +61,4 @@ redmine_issue_key_fields:
 
 # Hide sensitive information
 
-redmine_issue_no_log: yes
+redmine_issue_no_log: true
